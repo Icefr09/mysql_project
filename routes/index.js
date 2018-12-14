@@ -10,7 +10,7 @@ var con = mysql.createConnection({
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.sendFile(__dirname+'/index.html');
+
 });
 
 router.post('/login', function(req, res, next) {
@@ -27,6 +27,11 @@ router.post('/login', function(req, res, next) {
       res.send(result);
     });
   });
+});
+
+router.get('/signup', function(req, res, next) {
+  console.log(__dirname);
+  res.sendFile(__dirname+'/index.html');
 });
 
 module.exports = router;
