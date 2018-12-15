@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mysql = require('mysql');
+const bcrypt = require('bcrypt');
 const session = require('express-session');
 const expressValidator = require('express-validator');
 const messages = require('express-messages');
@@ -19,6 +20,7 @@ const con = mysql.createConnection({
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const signupRouter = require('./routes/signup');
+const notesRouter = require('./routes/notes');
 
 var app = express();
 
@@ -31,9 +33,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+// Express session middleware
+const sessionStore = new MySqlStore({}, con);
+app.use(session({
+  key: 'session_cookie_name',
+  secret: 'session_cookie_secret',
+  store: sessionStore,
+  resave: true,
+  saveUninitialized: true
+}));
+
+// import passport config
+require('./config/passport')(passport);
+// set passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/notes', notesRouter);
 //app.use('/signup', signupRouter);
 
 // catch 404 and forward to error handler
@@ -49,18 +68,9 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send(err,err.message);
+  //res.send(err,err.message);
 });
 
-// Express session middleware
-const sessionStore = new MySqlStore({}, con);
-app.use(session({
-  key: 'session_cookie_name',
-  secret: 'session_cookie_secret',
-  store: sessionStore,
-  resave: true,
-  saveUninitialized: true
-}));
 
 // Express validator middleware
 app.use(expressValidator({
@@ -83,45 +93,6 @@ app.use(expressValidator({
 
 
 
-// Passport config
-const LocalStrategy = require('passport-local').Strategy;
-passport.use(new LocalStrategy(function(username, password, done) {
-  if (!username || !password) {
-    return done(null, false, {message: 'Username and password are both required!'});
-  }
-
-  con.query(`select * from user where uemail = '${username}'`, function (err, rows) {
-    if (err) console.log(err);
-
-    if (!rows.length) {
-      return done(null, false, {message: 'Username is not registered'})
-    }
-
-    bcrypt.compare(password, rows[0].password, function(err, isMatch) {
-      if (err) console.log(err);
-
-      if (isMatch) {
-        return done(null, rows[0]); // RowDataPacket { user_id: 1, username: 'williamtan', password: '12345678' }
-      } else {
-        return done(null, false, {message: 'Wrong password!'});
-      }
-    })
-  });
-
-}));
-
-passport.serializeUser(function(sqlRow, done) {
-  done(null, sqlRow.user_id);
-});
-
-passport.deserializeUser(function(id, done){
-  con.query(`select * from user where uid = ${id}`, function (err, rows){
-    done(err, rows[0]);
-  });
-});
-// Passport middleware
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Set global variables
 app.get('*', function(req, res, next) {

@@ -24,7 +24,7 @@ router.post('/signup', function(req, res) {
   const username = req.body.username;
   const password = req.body.password;
 
-  const errors = null;//req.validationErrors();
+  const errors = null;//req.validationErrors(); validation function fails for unknown reason, tried hard to solve but can't, removed validation for now.
   if (errors) {
     res.render('signup', {
       errors: errors,
@@ -39,23 +39,22 @@ router.post('/signup', function(req, res) {
 
         res.redirect('/users/signup');
       } else {
-        bcrypt.genSalt(10, function(err, salt) {
-          bcrypt.hash(password, salt, function (err, hash) {
-            if (err) console.log(err,'err2');
+        con.query(`insert into user (uname, uemail, upassword) values ('${username}','${username}','${password}');`, function(err) { // Query that inserts the user into table
+          if (err) console.log(err,'err3');
 
-            con.query(`insert into user (uname, uemail, upassword) values ('${username}','${username}','${hash}');`, function(err) { // Query that inserts the user into table
-              if (err) console.log(err,'err3');
-
-              res.redirect('/users/login');
-            });
-          });
+          res.redirect('/users/login');
         });
       }
     });
   }
 });
 
-
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', {
+    successRedirect: '/notes',
+    failureRedirect: '/users/login',
+  })(req, res, next);
+});
 
 
 
