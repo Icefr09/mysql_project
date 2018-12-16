@@ -19,8 +19,31 @@
     <% } %>
 </div>
 
+<h1>Add a note</h1>
 
-
+<form method="post" action="/notes/add">
+    <div class="form-group">
+        <label>Content</label>
+        <input type="text" name="ntext" class="form-control" placeholder="ntext">
+    </div>
+    <div class="form-group">
+        <label>Radius</label>
+        <input type="text" name="nradius" class="form-control" placeholder="nradius">
+    </div>
+    <div class="form-group">
+        <label>Location Name</label>
+        <input type="text" name="lname" class="form-control" placeholder="lname">
+    </div>
+    <div class="form-group">
+        <label>Long</label>
+        <input type="text" name="llong" class="form-control" placeholder="llong">
+    </div>
+    <div class="form-group">
+        <label>Lat</label>
+        <input type="text" name="llat" class="form-control" placeholder="llat">
+    </div>
+    <button type="submit" class="btn btn-default">Add the note!</button>
+</form>
 
 
 
