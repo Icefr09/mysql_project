@@ -12,7 +12,15 @@ const con = mysql.createConnection({
 const auth = require('../config/auth');
 
 router.get('/', auth.isUser, function(req, res) {
-    res.send("notes working");
+    console.log(req.user);
+    const uid = req.user.uid;
+    console.log(uid);
+    console.log('trying to get all notes');
+    con.query(`select * from note where uid = '${uid}'`, function (err, rows) {
+        res.render('notes', {
+            data: rows
+        });
+    });
 });
 
 

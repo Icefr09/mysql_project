@@ -1,0 +1,27 @@
+<h1>Notes</h1>
+
+
+<div>
+    <% if (!data.length) { %>
+        <div>No active notes are available at this time and location! </div>
+    <% } else { %>
+        <% data.forEach(function(data) { %>
+            <div class="note-area">
+                <div>'nid': <%= data.nid%></div>
+                <div>'uid': <%= data.uid%></div>
+                <div>'lid': <%= data.lid%></div>
+                <div>'radius': <%= data.nradius%></div>
+                <div>'content': <%= data.ntext%></div>
+                <div>'Post_Time': <%= data.npostTime%></div>
+                <div>'Allow comments': <%= data.nallow%></div>
+            </div>
+        <% }); %>
+    <% } %>
+</div>
+
+
+
+
+
+
+
