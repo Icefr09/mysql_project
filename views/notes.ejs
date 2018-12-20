@@ -1,45 +1,120 @@
-<h1>Notes</h1>
+<html lang="eng">
+<body>
+<head>
+    <style type="text/css">
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: left;
+        }
+    </style>
+    <title>Notes</title>
+</head>
+
+<h1>Notes you have posted</h1>
+<table width="100%" border = "1">
+    <thead>
+    <th width = "100">nid</th>
+    <th width = "100">uid</th>
+    <th width = "100">lid</th>
+    <th width = "100">nradius</th>
+    <th width = "100">ntext</th>
+    <th width = "100">npostTime</th>
+    <th width = "100">nallow</th>
+    <th width = "100">details</th>
+    </thead>
+    <div>
+        <% if (!data.length) { %>
+            <div>No active notes are available at this time and location! </div>
+        <% } else { %>
+            <% data.forEach(function(data) { %>
+                <tr>
+                    <td align="center"><b><div><%= data.nid%></div></b></td>
+                    <td align="center"><b><div><%= data.uid%></div></b></td>
+                    <td align="center"><b><div><%= data.lid%></div></b></td>
+                    <td align="center"><b><div><%= data.nradius%></div></b></td>
+                    <td align="center"><b><div><%= data.ntext%></div></b></td>
+                    <td align="center"><b><div><%= data.npostTime%></div></b></td>
+                    <td align="center"><b><div><%= data.nallow%></div></b></td>
+                    <td align="center"><b><div>
+                                <a href="/notes/detail?nid=<%=data.nid%>">View</a>
+                            </div></b></td>
+                </tr>
+            <% }); %>
+        <% } %>
+    </div>
+</table>
 
 
+<h1>Your friends</h1>
 <div>
-    <% if (!data.length) { %>
-        <div>You have not posted any notes yet! </div>
+    <% if (!data3.length&&!data4.length) { %>
+        <div>You have no friends right now, go add some! </div>
     <% } else { %>
-        <% data.forEach(function(data) { %>
-            <div class="note-area">
-                <div>'nid': <%= data.nid%></div>
-                <div>'uid': <%= data.uid%></div>
-                <div>'lid': <%= data.lid%></div>
-                <div>'radius': <%= data.nradius%></div>
-                <div>'content': <%= data.ntext%></div>
-                <div>'Post_Time': <%= data.npostTime%></div>
-                <div>'Allow comments': <%= data.nallow%></div>
-            </div>
+        <% data3.forEach(function(data) { %>
+                <table border = "1">
+            <thead>
+            <th align = "center">FriendID</th>
+            <th width = "100">Name</th>
+            </thead>
+                <tr>
+                    <td align="center"><b><div><%= data.uid%></div></b></td>
+                    <td align="center"><b><div><%= data.uname%></div></b></td>
+                </tr>
+        </table>
         <% }); %>
+            <% data4.forEach(function(data) { %>
+        <table border = "1">
+            <thead>
+            <th align = "center">FriendID</th>
+            <th align = "center">Name</th>
+            <th align = "center">Email</th>
+            </thead>
+            <div>
+            <tr>
+                <td align="center"><b><div><%= data.uid%></div></b></td>
+                <td align="center"><b><div><%= data.uname%></div></b></td>
+                <td align="center"><b><div><%= data.uemail%></div></b></td>
+            </tr>
+            </div>
+        </table>
+            <% }); %>
     <% } %>
 </div>
 
-<h1>filters</h1>
-
-<div>
-    <% if (!data1.length) { %>
-        <div>No active filters are available </div>
-    <% } else { %>
-        <% data1.forEach(function(data1) { %>
-            <div class="note-area">
-                <div>'fid': <%= data1.fid%></div>
-                <div>'uid': <%= data1.uid%></div>
-                <div>'state': <%= data1.state%></div>
-                <div>'from': <%= data1.receive_from%></div>
-                <div>'flong': <%= data1.flong%></div>
-                <div>'flat': <%= data1.flat%></div>
-                <div>'fradius': <%= data1.fradius%></div>
-                <div>'startTime': <%= data1.startTime%></div>
-                <div>'endTime': <%= data1.endTime%></div>
-            </div>
-        <% }); %>
-    <% } %>
-</div>
+<h1>The filters you have set</h1>
+<table width="100%" border = "1">
+    <thead>
+    <th width = "100">fid</th>
+    <th width = "100">state</th>
+    <th width = "100">receive_from</th>
+    <th width = "100">tid</th>
+    <th width = "100">flong</th>
+    <th width = "100">flat</th>
+    <th width = "100">fradius</th>
+    <th width = "100">startTime</th>
+    <th width = "100">endTime</th>
+    </thead>
+    <div>
+        <% if (!data1.length) { %>
+            <div>No active filters are available!</div>
+        <% } else { %>
+            <% data1.forEach(function(data1) { %>
+                <tr>
+                    <td align="center"><b><div><%= data1.fid%></div></b></td>
+                    <td align="center"><b><div><%= data1.state%></div></b></td>
+                    <td align="center"><b><div><%= data1.receive_from%></div></b></td>
+                    <td align="center"><b><div><%= data1.tid%></div></b></td>
+                    <td align="center"><b><div><%= data1.flong%></div></b></td>
+                    <td align="center"><b><div><%= data1.flat%></div></b></td>
+                    <td align="center"><b><div><%= data1.fradius%></div></b></td>
+                    <td align="center"><b><div><%= data1.startTime%></div></b></td>
+                    <td align="center"><b><div><%= data1.endTime%></div></b></td>
+                </tr>
+            <% }); %>
+        <% } %>
+    </div>
+</table>
 
 <h1>Add a note</h1>
 
@@ -135,14 +210,26 @@
     <button type="submit" class="btn btn-default">View now!</button>
 </form>
 
+<h1>Add friends</h1>
+
+<form method="post" action="/notes/addfriend">
+    <div class="form-group">
+        <label>ID of the user you want to add</label>
+        <input type="text" name="friendID" class="form-control" placeholder="friendID">
+    </div>
+    <button type="submit" class="btn btn-default">Add friend now!</button>
+</form>
+
 
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCEVPw8uHCjBzjupgTnJFS8kqhFgrSMsA" type="text/javascript"></script>
-
-<button class="btn btn-primary" data-toggle="modal" data-target="#google_maps_api">点击获取经纬度坐标</button>
+<h1>Googlemap API</h1>
+<h2>Locate you and convert your location or address to Longitude and Latitude</h2>
+<h3>Then post note or set filter with the information</h3>
+<button class="btn btn-primary" data-toggle="modal" data-target="#google_maps_api">Click on map to get longitude and latitude info</button>
 <textarea class="form-control" id="locationText" rows="2" style="width:500px"></textarea>
 
 <div class="modal fade" id="google_maps_api" tabindex="-1" role="dialog"

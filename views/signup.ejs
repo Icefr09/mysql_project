@@ -1,17 +1,44 @@
-<h1><%= title %></h1>
+<html lang="eng">
+<head>
+    <style type="text/css">
+        label {
+            display: inline-block;
+            width: 150px;
+            text-align: right;
+        }
+    </style>
+</head>
+
+
+<div style="text-align: center;">
+    <h1><%= title %></h1>
+</div>
+<br>
 
 <form method="post" action="/users/signup">
     <div class="form-group">
-        <label>Username</label>
-        <input type="text" name="username" class="form-control" placeholder="Username">
+        <div style="text-align: center;">
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" placeholder="Username">
+        </div>
     </div>
+    <br>
     <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" class="form-control" placeholder="Password">
+        <div style="text-align: center;">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" placeholder="Password">
+        </div>
     </div>
+    <br>
     <div class="form-group">
-        <label>Confirm Password</label>
-        <input type="password" name="password_confirm" class="form-control" placeholder="Confirm Password">
+        <div style="text-align: center;">
+            <label>Confirm Password</label>
+            <input type="password" name="password_confirm" class="form-control" placeholder="Confirm Password">
+        </div>
     </div>
-    <button type="submit" class="btn btn-default">Register</button>
+    <br>
+    <div style="text-align: center;">
+        <button type="submit" class="btn btn-default">Register</button>
+    </div>
 </form>
+</html>

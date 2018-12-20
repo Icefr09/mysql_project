@@ -22,12 +22,17 @@ router.get('/', auth.isUser, function(req, res) {
     console.log('trying to get all notes');
     con.query(`select * from note natural join location where uid = '${uid}'`, function (err, rows) {
         con.query(`select * from filter where uid = '${uid}'`, function (err, rows1) {
-            res.render('notes', {
-                data: rows,
-                data1:rows1
+            con.query( `select * from relationship R join user U on U.uid = R.uid2 where uid1 = '${uid}'`, function (err, rows3){
+                con.query( `select * from relationship R join user U on U.uid = R.uid1 where uid2 = '${uid}'`, function (err, rows4){
+                    res.render('notes', {
+                        data: rows,
+                        data1: rows1,
+                        data3: rows3,
+                        data4: rows4
+                    });
+                });
             });
         });
-
     });
 });
 
@@ -102,11 +107,27 @@ router.get('/filtered', auth.isUser, function(req, res) {
     console.log('trying to get filtered notes');
     con.query(`with temp1 as(
 select *
-from filter
-where uid = '${uid}' and flong < '${currentLong}' and flat < '${currentLat}'  and state = '${currentState}' 
-)
-select distinct nid, ntext, npostTime, lname, uid
-from temp1 natural join has_tag natural join note natural join location;`, function (err, rows) {
+from filter as f
+where 
+111.111 *
+DEGREES(ACOS(COS(RADIANS('${currentLat}'))
+         * COS(RADIANS(f.flat))
+         * COS(RADIANS('${currentLong}' - f.flong))
+         + SIN(RADIANS('${currentLat}'))
+         * SIN(RADIANS(f.flat)))) <= (fradius * 0.9144 * 0.001) and
+             uid = '${uid}' and
+             state = '${currentState}'
+             )
+select distinct nid, ntext, npostTime, lname, note.uid
+from temp1 natural join has_tag join note using (nid) natural join location
+where 
+111.111 *
+DEGREES(ACOS(COS(RADIANS(llat))
+         * COS(RADIANS(flat))
+         * COS(RADIANS(llong - flong))
+         + SIN(RADIANS(llat))
+         * SIN(RADIANS(flat)))) <= (fradius * 0.9144 * 0.001)`, function (err, rows) {
+        if (err) {console.log(err);}
         const count = rows.length;
         console.log(rows,count);
         res.render('filtered', {
@@ -141,12 +162,57 @@ router.post('/addfilter', function(req,res) {
     }
     con.query(`select tid from tag where tname = '${tname}'`, function (err, rows) {
         const tid = rows[0].tid;
-        con.query(`insert into filter (uid, state, receive_from, tid, flong, flat, fradius, startTime, endTime) values ('${uid}','${state}','${receiveFrom}','${tid}','${flong}','${flat}','${fradius}',now(), now()) `, function (err) {
+        con.query(`insert into filter (uid, state, receive_from, tid, flong, flat, fradius, startTime, endTime) values ('${uid}','${state}','${receiveFrom}','${tid}','${flong}','${flat}','${fradius}',FLOOR(
+             TIME_TO_SEC('15:00:00') - RAND() * (
+                  TIME_TO_SEC(TIMEDIFF('22:00:00', '15:00:00'))
+             )
+          ), FLOOR(
+             TIME_TO_SEC('15:00:00') + RAND() * (
+                  TIME_TO_SEC(TIMEDIFF('22:00:00', '15:00:00'))
+             )
+          )) `, function (err) {
             res.redirect('/notes')
         });
 
     });
 });
+
+
+router.post('/addfriend', function(req,res) {
+    console.log(req.body);
+    const friendID = req.body.friendID;
+    const uid = req.user.uid;
+    con.query(`insert into relationship (uid1, uid2, actionuid, status) values ('${uid}','${friendID}','${uid}',0) `, function (err) {
+        res.redirect('/notes')
+    });
+});
+
+
+router.get('/detail', auth.isUser, function(req, res) {
+    const uid = req.user.uid;
+    const nid = req.query.nid;
+    console.log('trying to get details of node with ID', nid);
+    con.query(`select * from note where nid = '${nid}'`, function (err, rows) {
+        //console.log(rows);
+        con.query(`select * from note natural join comment where nid = '${nid}'`, function (err, rows1) {
+            res.render('note_detail', {
+                data: rows[0],
+                data1:rows1
+            });
+        });
+    });
+});
+
+router.post('/comment', function(req,res) {
+    console.log(req.body);
+    const text = req.body.text;
+    const nid = req.query.nid;
+    const uid = req.user.uid;
+    con.query(`insert into comment (uid, nid, ctext, cpostTime) values ('${uid}','${nid}','${text}',now()) `, function (err) {
+        res.redirect(`back`)
+    });
+});
+
 
 
 module.exports = router;
