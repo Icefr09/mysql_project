@@ -8,6 +8,10 @@ const con = mysql.createConnection({
     database: "db_project"
 });
 
+let currentState;
+let currentLong;
+let currentLat;
+let currentTime;
 
 const auth = require('../config/auth');
 
@@ -68,23 +72,58 @@ router.post('/add', function(req, res, next) {
     });
 });
 
+router.post('/select', function(req, res, next) {
+    console.log(req.body);
+    currentState = req.body.state;
+    currentLat = req.body.lat;
+    currentLong = req.body.long;
+    currentTime = req.body.time;
+    res.redirect('/notes/filtered');
+});
 
-
-router.get('/filtered', auth.isUser, function(req, res) {
+router.get('/filtered1', auth.isUser, function(req, res) {
     const uid = req.user.uid;
     console.log('trying to get filtered notes');
     con.query(`select * from filter natural join user where uid = '${uid}'`, function (err, rows) {
-        con.query(`select * from filter`, function (err, rows1) {
-            res.render('notes', {
-                data: rows,
-                data1:rows1
-            });
+        const count = rows.length;
+        console.log(rows,count);
+
+        con.query(`select * from notes`, function (err, rows1) {
+            renderNotes(req,res,rows,rows1);
         });
 
     });
 
 
 });
+
+router.get('/filtered', auth.isUser, function(req, res) {
+    const uid = req.user.uid;
+    console.log('trying to get filtered notes');
+    con.query(`with temp1 as(
+select *
+from filter
+where uid = '${uid}' and flong < '${currentLong}' and flat < '${currentLat}'  and state = '${currentState}' 
+)
+select distinct nid, ntext, npostTime, lname, uid
+from temp1 natural join has_tag natural join note natural join location;`, function (err, rows) {
+        const count = rows.length;
+        console.log(rows,count);
+        res.render('filtered', {
+            data: rows
+        });
+
+
+    });
+
+
+});
+
+function renderNotes(req,res,rows,rows1) {
+    const count = rows.length;
+    const uid = req.user.uid;
+
+}
 
 router.post('/addfilter', function(req,res) {
     console.log(req.body);

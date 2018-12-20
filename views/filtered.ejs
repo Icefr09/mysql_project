@@ -1,0 +1,18 @@
+<h1>Filtered Notes</h1>
+
+
+<div>
+    <% if (!data.length) { %>
+        <div>No active notes are available at this time, state and location! </div>
+    <% } else { %>
+        <% data.forEach(function(data) { %>
+            <div class="note-area">
+                <div>'nid': <%= data.nid%></div>
+                <div>'posted_by': <%= data.uid%></div>
+                <div>'location_name': <%= data.lname%></div>
+                <div>'content': <%= data.ntext%></div>
+                <div>'Post_Time': <%= data.npostTime%></div>
+            </div>
+        <% }); %>
+    <% } %>
+</div>

@@ -3,7 +3,7 @@
 
 <div>
     <% if (!data.length) { %>
-        <div>No active notes are available at this time and location! </div>
+        <div>You have not posted any notes yet! </div>
     <% } else { %>
         <% data.forEach(function(data) { %>
             <div class="note-area">
@@ -71,7 +71,7 @@
     <button type="submit" class="btn btn-default">Add the note!</button>
 </form>
 
-h1>Add a note</h1>
+<h1>Set a filter</h1>
 
 <form method="post" action="/notes/addfilter">
     <div class="form-group">
@@ -106,7 +106,33 @@ h1>Add a note</h1>
         <label>End-time</label>
         <input type="text" name="endTime" class="form-control" placeholder="endTime">
     </div>
-    <button type="submit" class="btn btn-default">Add the note!</button>
+    <button type="submit" class="btn btn-default">Set the filter!</button>
+</form>
+
+<h1>Filter the notes you want to see</h1>
+
+<form method="post" action="/notes/select">
+    <div class="form-group">
+        <label>State</label>
+        <input type="text" name="state" class="form-control" placeholder="state">
+    </div>
+    <div class="form-group">
+        <label>Latitude</label>
+        <input type="text" name="lat" class="form-control" placeholder="lat">
+    </div>
+    <div class="form-group">
+        <label>Longitude</label>
+        <input type="text" name="long" class="form-control" placeholder="long">
+    </div>
+    <div class="form-group">
+        <label>Set current time</label>
+        <input type="text" name="time" class="form-control" placeholder="time">
+    </div>
+    <div class="form-group">
+        <label>Radius</label>
+        <input type="text" name="fradius" class="form-control" placeholder="radius">
+    </div>
+    <button type="submit" class="btn btn-default">View now!</button>
 </form>
 
 
