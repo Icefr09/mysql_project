@@ -16,10 +16,14 @@ router.get('/', auth.isUser, function(req, res) {
     const uid = req.user.uid;
     console.log(uid);
     console.log('trying to get all notes');
-    con.query(`select * from note where uid = '${uid}'`, function (err, rows) {
-        res.render('notes', {
-            data: rows
+    con.query(`select * from note natural join location where uid = '${uid}'`, function (err, rows) {
+        con.query(`select * from filter where uid = '${uid}'`, function (err, rows1) {
+            res.render('notes', {
+                data: rows,
+                data1:rows1
+            });
         });
+
     });
 });
 
@@ -63,5 +67,47 @@ router.post('/add', function(req, res, next) {
         });
     });
 });
+
+
+
+router.get('/filtered', auth.isUser, function(req, res) {
+    const uid = req.user.uid;
+    console.log('trying to get filtered notes');
+    con.query(`select * from filter natural join user where uid = '${uid}'`, function (err, rows) {
+        con.query(`select * from filter`, function (err, rows1) {
+            res.render('notes', {
+                data: rows,
+                data1:rows1
+            });
+        });
+
+    });
+
+
+});
+
+router.post('/addfilter', function(req,res) {
+    console.log(req.body);
+    const state = req.body.state;
+    let receiveFrom = req.body.receiveFrom;
+    const flong = req.body.flong;
+    const flat = req.body.flat;
+    const fradius = req.body.fradius;
+    const tname = req.body.tname;
+    const startTime = req.body.startTime
+    const endTime = req.body.endTime;
+    const uid = req.user.uid;
+    if (receiveFrom !=1 ) {
+        receiveFrom = 0;
+    }
+    con.query(`select tid from tag where tname = '${tname}'`, function (err, rows) {
+        const tid = rows[0].tid;
+        con.query(`insert into filter (uid, state, receive_from, tid, flong, flat, fradius, startTime, endTime) values ('${uid}','${state}','${receiveFrom}','${tid}','${flong}','${flat}','${fradius}',now(), now()) `, function (err) {
+            res.redirect('/notes')
+        });
+
+    });
+});
+
 
 module.exports = router;

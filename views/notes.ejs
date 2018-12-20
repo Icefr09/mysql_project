@@ -19,6 +19,28 @@
     <% } %>
 </div>
 
+<h1>filters</h1>
+
+<div>
+    <% if (!data1.length) { %>
+        <div>No active filters are available </div>
+    <% } else { %>
+        <% data1.forEach(function(data1) { %>
+            <div class="note-area">
+                <div>'fid': <%= data1.fid%></div>
+                <div>'uid': <%= data1.uid%></div>
+                <div>'state': <%= data1.state%></div>
+                <div>'from': <%= data1.receive_from%></div>
+                <div>'flong': <%= data1.flong%></div>
+                <div>'flat': <%= data1.flat%></div>
+                <div>'fradius': <%= data1.fradius%></div>
+                <div>'startTime': <%= data1.startTime%></div>
+                <div>'endTime': <%= data1.endTime%></div>
+            </div>
+        <% }); %>
+    <% } %>
+</div>
+
 <h1>Add a note</h1>
 
 <form method="post" action="/notes/add">
@@ -49,7 +71,50 @@
     <button type="submit" class="btn btn-default">Add the note!</button>
 </form>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCEVPw8uHCjBzjupgTnJFS8kqhFgrSMsA"type="text/javascript"></script>
+h1>Add a note</h1>
+
+<form method="post" action="/notes/addfilter">
+    <div class="form-group">
+        <label>State</label>
+        <input type="text" name="state" class="form-control" placeholder="state">
+    </div>
+    <div class="form-group">
+        <label>Friends-only</label>
+        <input type="checkbox" name="receiveFrom" class="form-control" placeholder="receiveFrom" value = "1">
+    </div>
+    <div class="form-group">
+        <label>Tag</label>
+        <input type="text" name="tname" class="form-control" placeholder="tname">
+    </div>
+    <div class="form-group">
+        <label>Long</label>
+        <input type="text" name="flong" class="form-control" placeholder="flong">
+    </div>
+    <div class="form-group">
+        <label>Lat</label>
+        <input type="text" name="flat" class="form-control" placeholder="flat">
+    </div>
+    <div class="form-group">
+        <label>Radius</label>
+        <input type="text" name="fradius" class="form-control" placeholder="radius">
+    </div>
+    <div class="form-group">
+        <label>Start-time</label>
+        <input type="text" name="startTime" class="form-control" placeholder="startTime">
+    </div>
+    <div class="form-group">
+        <label>End-time</label>
+        <input type="text" name="endTime" class="form-control" placeholder="endTime">
+    </div>
+    <button type="submit" class="btn btn-default">Add the note!</button>
+</form>
+
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCEVPw8uHCjBzjupgTnJFS8kqhFgrSMsA" type="text/javascript"></script>
 
 <button class="btn btn-primary" data-toggle="modal" data-target="#google_maps_api">点击获取经纬度坐标</button>
 <textarea class="form-control" id="locationText" rows="2" style="width:500px"></textarea>
@@ -72,7 +137,85 @@
     </div>
 </div>
 
-<script src="../googleMap.js"></script>
+<script rows = <%= data%>>
+
+    const googleMap = {
+        map: null,
+        markers: {},
+        currentId: 0,
+
+        uniqueId: function () {
+            return ++this.currentId;
+        },
+
+        infowindow: new google.maps.InfoWindow({
+            size: new google.maps.Size(150, 50)
+        }),
+
+        initialize: function () {
+            if (this.map) return null;
+
+            var myOptions = {
+                zoom: 3,//放大的倍数
+                center: new google.maps.LatLng(34, 103),//初始化时地图的中心
+                mapTypeControl: true,
+                mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+                navigationControl: true,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            this.map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+
+            google.maps.event.addListener(this.map, 'click', function () {
+                googleMap.infowindow.close();
+            });
+
+            //console.log(rows);
+
+            google.maps.event.addListener(this.map, 'click', function (event) {//点击时出现的提示窗口，这里显示经纬度
+                var Latitude = event.latLng.lat().toFixed(2);
+                var longitude = event.latLng.lng().toFixed(2);
+                googleMap.addMarker(event.latLng, "name", "<b>Location</b><br>" +Latitude +","+ longitude,
+                    Latitude +","+ longitude);
+            });
+
+            //google.maps.event.addListener(this.map, 'click', function (event) {
+            //    console.log("Latitude: " + event.latLng.lat() + " " + ", longitude: " + event.latLng.lng());
+            //});
+        },
+
+        addMarker: function (Gpoint, name, contentString, geo) {//添加地图上的标记
+            var id = this.uniqueId(); // get new id
+            marker = new google.maps.Marker({
+                id: id,
+                position: Gpoint,
+                geo : geo,
+                map: googleMap.map,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+
+            google.maps.event.addListener(marker, 'click', function () {//添加标记
+                googleMap.infowindow.setPosition(this.position);
+                googleMap.infowindow.setContent(contentString);
+                googleMap.infowindow.open(googleMap.map, marker);
+            });
+            google.maps.event.trigger(marker, 'click');
+
+            googleMap.map.panTo(Gpoint);
+
+            this.markers[id] = marker;
+
+            google.maps.event.addListener(marker, "rightclick", function (point) {//右键取消地图标记
+                googleMap.delMarker(this.id)
+            });
+        },
+
+        delMarker: function (id) {//删除标记
+            this.markers[id].setMap(null);
+            delete this.markers[id];
+        }
+    };
+</script>
 <script>
     $("#google_maps_api").on("shown.bs.modal", function () {
         googleMap.initialize();
@@ -85,4 +228,7 @@
         res = res.substring(0,res.length-1);
         $("#locationText").val(res);
     });
+</script>
+<script>
+
 </script>
